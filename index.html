@@ -397,7 +397,7 @@
   <div class="tldr">
     <p class="tldr-label">TL;DR</p>
     <ul>
-      <li><strong>Strong models often already have the capability. The harness decides whether it shows up</strong>: on TerminalBench, one targeted <code>self-verification</code> skill buys more than 10 points, while a generic version performs worse than no verification skill at all.</li>
+      <li><strong>Strong models often already have the capability. The harness decides whether it shows up</strong>: on TerminalBench 2.0, adding <code>self-verification</code> skill along with self-evolved harness achieves 76.5% pass rate.</li>
       <li><strong>Agents can learn their own harnesses &mdash; but only with the right loop.</strong> Agents could revise bad skills inside a single run, but more feedback was not better feedback, and human-curated skills still won when the loop never exposed the missing knowledge.</li>
     </ul>
   </div>
@@ -434,13 +434,8 @@
       <tbody>
         <tr>
           <td>TerminalBench 2.0</td>
-          <td>Add a curated <code>self-verification</code> skill</td>
-          <td><strong>+10.56 pp overall</strong></td>
-        </tr>
-        <tr>
-          <td>TerminalBench 2.0</td>
-          <td>Replace the curated skill with a generic one</td>
-          <td><strong>Worse than baseline</strong></td>
+          <td>Add <code>self-verification</code> skill along with self-evolved harness</td>
+          <td><strong>76.5% pass rate</strong></td>
         </tr>
         <tr>
           <td>MCP-Atlas</td>
@@ -460,71 +455,25 @@
 
     <p>Opus 4.6 self-verifies all the time on short tasks. You can watch it in an interactive session: write code, run a test, inspect the output, fix what broke.</p>
 
-    <p>But on long-horizon TerminalBench tasks, the same model often burns its budget executing commands and exits without checking anything.</p>
+    <p>But on long-horizon TerminalBench 2.0 tasks, the same model often burns its budget executing commands and exits without checking anything.</p>
 
     <p class="emphasis-lines">The capability is there.<br>The deployment is not.</p>
 
-    <p>Our intervention was tiny: A curated <code>self-verification</code> skill, about 1,700 characters of "Check Your Assumptions" checklist, plus a one-line system prompt nudge to lazy-load the skill at the end of the trajectory.</p>
+    <p>Our intervention was tiny: A <code>self-verification</code> skill plus a one-line system prompt nudge to lazy-load the skill at the end of the trajectory.</p>
 
     <p class="emphasis-lines">We did not teach Opus 4.6 how to verify.<br>We reminded it to do something it already knows how to do.</p>
 
-    <p>That single change delivered <strong>+33.33 percentage points on the 21-task flaky subset</strong> (33.33% &rarr; 66.67%). On the full benchmark, it was still worth <strong>+10.56 pp</strong>.</p>
+    <p>That single change delivered <strong>+33.33 percentage points on the 21 unstable tasks</strong> (33.33% &rarr; 66.67%). On the full benchmark, it achieves 76.5% pass rate.</p>
 
     <!-- Subsection: Good harness / bad harness -->
-    <h3>A good harness helped. A bad one hurt.</h3>
+
+    <p>More importantly, we find the nudged self-verification skill increaese the verification frequency from 24% to 78% on the full benchmark.<p>
 
     <p>This is where the story got more interesting.</p>
 
-    <p>We ran an ablation on TerminalBench, holding everything fixed except the content of the verification skill:</p>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Configuration</th>
-          <th>Score</th>
-          <th>vs. no-skill baseline</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>No self-verification (baseline)</td>
-          <td>72.21%</td>
-          <td>&mdash;</td>
-        </tr>
-        <tr>
-          <td>Curated verification skill</td>
-          <td>74.27%</td>
-          <td><strong>+2.06 pp</strong></td>
-        </tr>
-        <tr>
-          <td>Curated skill + prompt nudge</td>
-          <td>76.47%</td>
-          <td><strong>+4.26 pp</strong></td>
-        </tr>
-        <tr>
-          <td>Generic verification skill</td>
-          <td>70.16%</td>
-          <td><strong>&minus;2.05 pp</strong></td>
-        </tr>
-        <tr>
-          <td>Generic skill + prompt nudge</td>
-          <td>68.24%</td>
-          <td><strong>&minus;3.97 pp</strong></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p>Same model. Same benchmark. Same kind of intervention.<br>Only the harness content changed.</p>
-
-    <p>The curated skill was the <code>self-verification</code> checklist described earlier: about 1,700 characters, loaded at the end of the trajectory. The generic skill addressed the same idea in broad terms &mdash; "verify your results" &mdash; without specifying what to check or when.</p>
-
-    <p>That difference turned out to matter. The curated skill helped because it pointed to a specific moment: at the end of a long trajectory, pause and run a concrete checklist.</p>
-
-    <p>The generic version did the opposite. It created a constant pull on attention, encouraging the model to "verify" in a vague, untimed way that burned budget and interfered with task progress.</p>
-
     <p>So the lesson is not just that harnesses matter.</p>
 
-    <p class="punchline">It is that the harness is itself a design object.<br>A good harness unlocks capability.<br>A bad one can suppress it.</p>
+    <p class="punchline">It is that the harness is itself a design object.<br>A good harness unlocks capability (e.g., self-verification in the long-horizon task).
 
     <!-- Subsection: Evolver rediscovered verification -->
     <h3>No one told the evolver to verify. Three of its five skills do.</h3>
